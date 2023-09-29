@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Patch,
   Post,
@@ -36,6 +37,17 @@ export class CartController {
       return response;
     }
     return { message: 'Cart not found' };
+  }
+
+  /**
+   * Endpoint to delete an item from a cart
+   * @param {string} cartId - The ID of the cart to delete the item from
+   * @param {number} itemId - The ID of the item to delete
+   * @returns {CartResponse | { message: string }}
+   */
+  @Delete(':cartId/:itemId')
+  deleteItem(@Param('cartId') cartId: string, @Param('itemId') itemId: number) {
+    return this.cartService.deleteItem(cartId, itemId);
   }
 
   /**
