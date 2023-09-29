@@ -66,6 +66,28 @@ export class CartService {
     throw new NotFoundException('Cart not found');
   }
 
+  deleteItem(cartId: string, itemId: number): CartResponse {
+    const cart = this.carts.find((cart) => cart.id === cartId);
+    if (cart && cart.items.length > 0) {
+      const itemIndex = this.findIndex(cart, itemId);
+      if (itemIndex !== -1) {
+        cart.totalAmount -= cart.items[itemIndex].totalPrice;
+        cart.items.splice(itemIndex, 1);
+        cart.numberOfItems = cart.items.length;
+        return {
+          message: `Item with id '${itemId}' successfully deleted`,
+          cart,
+        };
+      }
+      throw new NotFoundException(`Item with id '${itemId}' not found`);
+    }
+    if (cart) {
+      throw new NotFoundException('Cart is empty');
+    }
+
+    throw new NotFoundException('Cart not found');
+  }
+
   findIndex(cart: Cart, itemId: number): number {
     return cart.items.findIndex((item) => +item.id === +itemId);
   }
