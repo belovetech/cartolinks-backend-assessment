@@ -28,10 +28,11 @@ export class CartService {
       let lastItemId = cart.items.length > 0 ? cart.items.at(-1).id : 0;
       item.id = ++lastItemId;
 
-      const totalPrice = item.price * item.quantity;
+      item.price = this.transformPrice(item.price);
+      const totalPrice = this.transformPrice(item.price * item.quantity);
       item.totalPrice = totalPrice;
 
-      cart.totalAmount += totalPrice;
+      cart.totalAmount = this.transformPrice(cart.totalAmount + totalPrice);
       cart.items.push(item);
       cart.numberOfItems = cart.items.length;
 
@@ -53,8 +54,11 @@ export class CartService {
       const itemIndex = this.findIndex(cart, itemId);
       if (itemIndex !== -1) {
         cart.items[itemIndex].quantity = quantity;
-        cart.items[itemIndex].totalPrice =
-          cart.items[itemIndex].price * quantity;
+        cart.totalAmount -= cart.items[itemIndex].totalPrice; // subtract old price
+        cart.items[itemIndex].totalPrice = this.transformPrice(
+          cart.items[itemIndex].price * quantity,
+        ); // update total price
+        cart.totalAmount += cart.items[itemIndex].totalPrice; // add new price
         return {
           message: 'item successfully updated',
           Item: cart.items[itemIndex],
@@ -71,7 +75,9 @@ export class CartService {
     if (cart && cart.items.length > 0) {
       const itemIndex = this.findIndex(cart, itemId);
       if (itemIndex !== -1) {
-        cart.totalAmount -= cart.items[itemIndex].totalPrice;
+        cart.totalAmount = this.transformPrice(
+          cart.totalAmount - cart.items[itemIndex].totalPrice,
+        );
         cart.items.splice(itemIndex, 1);
         cart.numberOfItems = cart.items.length;
         return {
@@ -90,5 +96,9 @@ export class CartService {
 
   findIndex(cart: Cart, itemId: number): number {
     return cart.items.findIndex((item) => +item.id === +itemId);
+  }
+
+  transformPrice(amount: number): number {
+    return Math.round(amount * 100) / 100;
   }
 }
