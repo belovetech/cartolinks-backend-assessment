@@ -39,11 +39,9 @@ describe('CartController', () => {
     it('should add an item to a cart', () => {
       const cartId = '1';
       const item: CreateItemDto = {
-        id: 1,
         name: 'item 1',
         price: 10.2,
         quantity: 2,
-        totalPrice: 10.4,
       };
       const result = {
         message: 'Item successfully added',
@@ -70,11 +68,9 @@ describe('CartController', () => {
     it('should return an error message if cart is not found', () => {
       const cartId = '1';
       const item: CreateItemDto = {
-        id: 1,
         name: 'item 1',
         price: 10.2,
         quantity: 1,
-        totalPrice: 10.2,
       };
       jest.spyOn(service, 'addItem').mockImplementation(() => null);
 
@@ -124,19 +120,16 @@ describe('CartController', () => {
       const cartId = '1';
       const itemId = 1;
       const item: Partial<CreateItemDto> = {
-        name: 'item',
-        price: 10.2,
-        quantity: 1,
-        totalPrice: 10.2,
+        quantity: 2,
       };
       const result = {
         message: 'item successfully updated',
         Item: {
           name: 'Item 1',
           price: 10.2,
-          quantity: 1,
+          quantity: 2,
           id: 1,
-          totalPrice: 10.2,
+          totalPrice: 20.4,
         },
       };
       jest.spyOn(service, 'updateItem').mockImplementation(() => result);
