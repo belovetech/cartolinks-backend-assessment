@@ -1,5 +1,9 @@
 import { ulid } from 'ulid';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Cart, Item, CartResponse } from './interfaces/cart.interface';
 
 @Injectable()
@@ -35,5 +39,34 @@ export class CartService {
     }
 
     throw new NotFoundException('Cart not found');
+  }
+
+  updateItem(cartId: string, itemId: number, quantity: number): CartResponse {
+    if (quantity === undefined)
+      throw new BadRequestException('Quantity is required');
+
+    if (quantity < 1)
+      throw new BadRequestException('Quantity must be greater than 0');
+
+    const cart = this.carts.find((cart) => cart.id === cartId);
+    if (cart) {
+      const itemIndex = this.findIndex(cart, itemId);
+      if (itemIndex !== -1) {
+        cart.items[itemIndex].quantity = quantity;
+        cart.items[itemIndex].totalPrice =
+          cart.items[itemIndex].price * quantity;
+        return {
+          message: 'item successfully updated',
+          Item: cart.items[itemIndex],
+        };
+      }
+      throw new NotFoundException(`Item with id '${itemId}' not found`);
+    }
+
+    throw new NotFoundException('Cart not found');
+  }
+
+  findIndex(cart: Cart, itemId: number): number {
+    return cart.items.findIndex((item) => +item.id === +itemId);
   }
 }
