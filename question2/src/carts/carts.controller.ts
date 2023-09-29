@@ -10,6 +10,7 @@ import {
 import { CartService } from './carts.service';
 import { CreateItemDto } from './dtos/create-item.dto';
 import { CartResponse } from './interfaces/cart.interface';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('carts')
 export class CartController {
@@ -58,6 +59,7 @@ export class CartController {
    * @returns {CartResponse | { message: string }}
    */
 
+  @ApiBody({ type: CreateItemDto })
   @Patch(':cartId/:itemId')
   async updateItem(
     @Param('cartId') cartId: string,

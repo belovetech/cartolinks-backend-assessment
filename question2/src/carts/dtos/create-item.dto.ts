@@ -1,9 +1,6 @@
-import { IsOptional, IsString, IsNumber, IsInt } from 'class-validator';
+import { IsString, IsNumber, IsInt } from 'class-validator';
 
 export class CreateItemDto {
-  @IsOptional()
-  id: number;
-
   @IsString()
   name: string;
 
@@ -12,7 +9,4 @@ export class CreateItemDto {
 
   @IsInt()
   quantity: number;
-
-  @IsOptional()
-  totalPrice: number;
 }
