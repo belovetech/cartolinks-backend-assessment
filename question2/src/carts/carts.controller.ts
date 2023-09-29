@@ -1,4 +1,11 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CartService } from './carts.service';
 import { CreateItemDto } from './dtos/create-item.dto';
 import { CartResponse } from './interfaces/cart.interface';
@@ -29,5 +36,29 @@ export class CartController {
       return response;
     }
     return { message: 'Cart not found' };
+  }
+
+  /**
+   * Endpoint to update the quantity of an item in a cart
+   * @param {string} cartId - The ID of the cart containing the item to update
+   * @param {number} itemId - The ID of the item to update
+   * @param {number} quantity - The new quantity of the item
+   * @returns {CartResponse | { message: string }}
+   */
+
+  @Patch(':cartId/:itemId')
+  async updateItem(
+    @Param('cartId') cartId: string,
+    @Param('itemId') itemId: number,
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        skipMissingProperties: true,
+      }),
+    )
+    cart: Partial<CreateItemDto>,
+  ) {
+    return this.cartService.updateItem(cartId, itemId, cart.quantity);
   }
 }
