@@ -2,7 +2,7 @@
 
 ## Description
 
-This is a Nest.js simple application for managing shopping carts. It provides endpoints for creating a new cart, adding items to a cart, deleting items from a cart, updating the quantity of items in a cart, and retrieving a list of all carts.
+This is a Nest.js simple application for managing shopping carts. It provides endpoints for creating a new cart, adding items to a cart, deleting items from a cart, and updating the quantity of items in a cart..
 
 ## Installation
 
