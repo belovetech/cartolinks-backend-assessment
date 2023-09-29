@@ -111,3 +111,9 @@ Content-Type: application/json
   "quantity": 5
 }
 ```
+
+## Interactive Swagger UI URL
+
+```
+http://localhost:3000/api
+```
