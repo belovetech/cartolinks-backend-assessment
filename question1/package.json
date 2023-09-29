@@ -1,0 +1,11 @@
+{
+  "name": "question1",
+  "version": "1.0.0",
+  "description": "Cartolinks Backend internship Question 1",
+  "main": "index.js",
+  "scripts": {
+    "server": "node index.js"
+  },
+  "author": "Abeeb Raheem",
+  "license": "ISC"
+}
