@@ -33,7 +33,7 @@ export class CartService {
       item.totalPrice = totalPrice;
 
       cart.totalAmount = this.transformPrice(cart.totalAmount + totalPrice);
-      cart.items.push(item);
+      cart.items.unshift(item);
       cart.numberOfItems = cart.items.length;
 
       return { message: 'Item successfully added', cart };
