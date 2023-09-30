@@ -47,55 +47,51 @@ export class CartService {
   }
 
   updateItem(cartId: string, itemId: number, quantity: number): CartResponse {
-    if (quantity === undefined)
-      throw new BadRequestException('Quantity is required');
+    if (!quantity)
+      throw new BadRequestException('Quantity is required and cannot');
 
     if (quantity < 1)
       throw new BadRequestException('Quantity must be greater than 0');
 
     const cart = this.carts.find((cart) => cart.id === cartId);
-    if (cart) {
-      const itemIndex = this.findIndex(cart, itemId);
-      if (itemIndex !== -1) {
-        cart.items[itemIndex].quantity = quantity;
-        cart.totalAmount -= cart.items[itemIndex].totalPrice; // subtract old price
-        cart.items[itemIndex].totalPrice = this.transformPrice(
-          cart.items[itemIndex].price * quantity,
-        ); // update total price
-        cart.totalAmount += cart.items[itemIndex].totalPrice; // add new price
-        return {
-          message: 'item successfully updated',
-          Item: cart.items[itemIndex],
-        };
-      }
-      throw new NotFoundException(`Item with id '${itemId}' not found`);
-    }
+    if (!cart) throw new NotFoundException('Cart not found');
 
-    throw new NotFoundException('Cart not found');
+    const itemIndex = this.findIndex(cart, itemId);
+    if (itemIndex === -1)
+      throw new NotFoundException(`Item with id '${itemId}' not found`);
+
+    cart.items[itemIndex].quantity = quantity;
+    cart.totalAmount -= cart.items[itemIndex].totalPrice; // subtract old price
+    cart.items[itemIndex].totalPrice = this.transformPrice(
+      cart.items[itemIndex].price * quantity,
+    ); // update total price
+    cart.totalAmount += cart.items[itemIndex].totalPrice; // add new price
+
+    return {
+      message: 'item successfully updated',
+      Item: cart.items[itemIndex],
+    };
   }
 
   deleteItem(cartId: string, itemId: number): CartResponse {
     const cart = this.carts.find((cart) => cart.id === cartId);
-    if (cart && cart.items.length > 0) {
-      const itemIndex = this.findIndex(cart, itemId);
-      if (itemIndex !== -1) {
-        cart.totalAmount = this.transformPrice(
-          cart.totalAmount - cart.items[itemIndex].totalPrice,
-        );
-        cart.items.splice(itemIndex, 1);
-        cart.numberOfItems = cart.items.length;
-        return {
-          message: `Item with id '${itemId}' successfully deleted`,
-          cart,
-        };
-      }
-      throw new NotFoundException(`Item with id '${itemId}' not found`);
-    }
-    if (cart) {
-      throw new NotFoundException('Cart is empty');
-    }
+    if (!cart) throw new NotFoundException('Cart not found');
+    if (cart.items.length === 0) throw new NotFoundException('Cart is empty');
 
-    throw new NotFoundException('Cart not found');
+    const itemIndex = this.findIndex(cart, itemId);
+    if (itemIndex === -1)
+      throw new NotFoundException(`Item with id '${itemId}' not found`);
+
+    cart.totalAmount = this.transformPrice(
+      cart.totalAmount - cart.items[itemIndex].totalPrice,
+    );
+    cart.items.splice(itemIndex, 1);
+    cart.numberOfItems = cart.items.length;
+
+    return {
+      message: `Item with id '${itemId}' successfully deleted`,
+      cart,
+    };
   }
 
   private findIndex(cart: Cart, itemId: number): number {
