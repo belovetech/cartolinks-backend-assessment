@@ -25,6 +25,9 @@ export class CartService {
     const cart = this.carts.find((cart) => cart.id === cartId);
 
     if (cart) {
+      if (this.itemExists(cart, item))
+        throw new BadRequestException('Item already exists in cart');
+
       let lastItemId = cart.items.length > 0 ? cart.items.at(-1).id : 0;
       item.id = ++lastItemId;
 
@@ -96,6 +99,29 @@ export class CartService {
 
   findIndex(cart: Cart, itemId: number): number {
     return cart.items.findIndex((item) => +item.id === +itemId);
+  }
+
+  itemExists(cart: Cart, newItem: Item): boolean {
+    return cart.items.some((item) => {
+      return this.areItemsEqual(item, newItem);
+    });
+  }
+
+  areItemsEqual(item1: Item, item2: Item): boolean {
+    const item1Keys = Object.keys(item1).filter(
+      (key) => key !== 'id' && key !== 'totalPrice',
+    );
+    const item2Keys = Object.keys(item2).filter(
+      (key) => key !== 'id' && key !== 'totalPrice',
+    );
+
+    if (item1Keys.length !== item2Keys.length) return false;
+
+    for (const key of item1Keys) {
+      if (item1[key] !== item2[key]) return false;
+    }
+
+    return true;
   }
 
   transformPrice(amount: number): number {
