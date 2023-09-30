@@ -48,10 +48,9 @@ export class CartService {
 
   updateItem(cartId: string, itemId: number, quantity: number): CartResponse {
     if (!quantity)
-      throw new BadRequestException('Quantity is required and cannot');
-
-    if (quantity < 1)
-      throw new BadRequestException('Quantity must be greater than 0');
+      throw new BadRequestException(
+        'Quantity is required and must be greater than 0',
+      );
 
     const cart = this.carts.find((cart) => cart.id === cartId);
     if (!cart) throw new NotFoundException('Cart not found');
