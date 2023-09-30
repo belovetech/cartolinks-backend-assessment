@@ -36,7 +36,8 @@ export class CartService {
       item.totalPrice = totalPrice;
 
       cart.totalAmount = this.transformPrice(cart.totalAmount + totalPrice);
-      cart.items.unshift(item);
+
+      cart.items.unshift(this.orderItem(item));
       cart.numberOfItems = cart.items.length;
 
       return { message: 'Item successfully added', cart };
@@ -97,7 +98,7 @@ export class CartService {
     throw new NotFoundException('Cart not found');
   }
 
-  findIndex(cart: Cart, itemId: number): number {
+  private findIndex(cart: Cart, itemId: number): number {
     return cart.items.findIndex((item) => +item.id === +itemId);
   }
 
@@ -107,7 +108,7 @@ export class CartService {
     });
   }
 
-  areItemsEqual(item1: Item, item2: Item): boolean {
+  private areItemsEqual(item1: Item, item2: Item): boolean {
     const item1Keys = Object.keys(item1).filter(
       (key) => key !== 'id' && key !== 'totalPrice',
     );
@@ -124,7 +125,24 @@ export class CartService {
     return true;
   }
 
-  transformPrice(amount: number): number {
+  private orderItem(item: Item): Item {
+    const result = {
+      id: 0,
+      name: '',
+      price: 0,
+      quantity: 0,
+      totalPrice: 0,
+    };
+
+    for (const key of Object.keys(result)) {
+      if (item.hasOwnProperty(key)) {
+        result[key] = item[key];
+      }
+    }
+    return result;
+  }
+
+  private transformPrice(amount: number): number {
     return Math.round(amount * 100) / 100;
   }
 }
