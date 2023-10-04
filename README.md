@@ -1,3 +1,3 @@
-# Cartolinks-backend-internship-test
+# Cartolinks-backend-assessment
 
-Cartolinks backend internship test
+Cartolinks backend assessment
